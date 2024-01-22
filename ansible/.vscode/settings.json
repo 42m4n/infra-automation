@@ -1,0 +1,6 @@
+{
+    "yaml.schemas": {
+        "https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/ansible.json#/$defs/playbook": "file:///home/arman/Monster/ansible/Hardening/roles/hardening/tasks/ntp.yml"
+    })
+    "ansible.python.interpreterPath": "/home/arman/Monster/ansible/venv/bin/python"
+}

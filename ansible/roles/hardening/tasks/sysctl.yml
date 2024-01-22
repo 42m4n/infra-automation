@@ -1,0 +1,7 @@
+- name: Kernel parameters (sysctl)
+  become: true
+  ansible.builtin.copy:
+    src: 99-sysctl-lynis.conf
+    dest: /etc/sysctl.d/99-sysctl-lynis.conf
+    mode: '0664'
+  notify: Applying Kernel parameters

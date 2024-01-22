@@ -1,0 +1,45 @@
+---
+- name: Check if resolvectl is available
+  ansible.builtin.stat:
+    path: /usr/bin/resolvectl
+  register: resolvectl_check
+  ignore_errors: true
+
+- name: Check if NetworkManager is available
+  ansible.builtin.stat:
+    path: /usr/bin/nmcli
+  register: nmcli_check
+  ignore_errors: true
+
+- name: Configure DNS if resolvectl in installed
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/systemd/resolved.conf
+    regexp: '^#?DNS='
+    line: "DNS={{ dns_server_1 | default(1.1.1.1) }} {{ dns_server_2 | default(8.8.8.8) }}"
+    state: present
+  when: resolvectl_check.stat.exists
+  notify: Restart resolvectl
+
+- name: Update NetworkManager configuration
+  ansible.builtin.lineinfile:
+    path: /etc/NetworkManager/NetworkManager.conf
+    regexp: '^dns='
+    line: 'dns=none'
+    state: present
+    insertafter: '^\\[main\\]'
+  when: nmcli_check.stat.exists
+  notify:
+    - Restart NetworkManager
+
+- name: Update resolv.conf
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/resolv.confz
+    regexp: '^nameserver \d+\.\d+\.\d+\.\d+'
+    line: "nameserver 4.2.2.4" # {{ item }}"
+    state: present
+  when: not resolvectl_check.stat.exists
+# loop:
+#   - "{{ dns_server_1 | default('1.1.1.1') }}"
+#   - "{{ dns_server_2 | default(8.8.8.8) }}"

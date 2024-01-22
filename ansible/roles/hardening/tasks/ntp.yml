@@ -1,0 +1,16 @@
+- name: Install chrony
+  become: true
+  ansible.builtin.package:
+    name: chrony
+    state: present
+
+- name: Check Service ntp being started
+  become: true
+  ansible.builtin.systemd_service:
+    name: chrony
+    state: started
+    enabled: true
+
+- name: Set time-zone to Asia/Tehran
+  community.general.timezone:
+    name: Asia/Tehran

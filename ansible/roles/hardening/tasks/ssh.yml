@@ -1,0 +1,36 @@
+---
+- name: Set SSH Protocol Version to 2
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?{{ item.option }}'
+    line: "{{ item.item.option }} {{ item.value }}"
+  notify: Restart sshd
+  loop:
+    - { option: AllowTcpForwarding, value: "NO"}
+    - { option: ClientAliveCountMax, value: "2"}
+    - { option: ClientAliveInterval, value: "0"}
+    - { option: Compression, value: "NO"}
+    - { option: FingerprintHash, value: "SHA256"}
+    - { option: GatewayPorts, value: "NO"}
+    - { option: IgnoreRhosts, value: "YES"}
+    - { option: LoginGraceTime, value: "120"}
+    - { option: LogLevel, value: "VERBOS"}
+    - { option: MaxAuthTries, value: "3"}
+    - { option: MaxSessions, value: "2"}
+    - { option: PermitRootLogin, value: "WITHOUT-PASSWORD"}
+    - { option: PermitUserEnvironment, value: "NO"}
+    - { option: PermitTunnel, value: "NO"}
+    - { option: Port, value: "{{ ssh_port | default(22) }}"}
+    - { option: PrintLastLog, value: "YES"}
+    - { option: StrictModes, value: "YES"}
+    - { option: TCPKeepAlive, value: "NO"}
+    - { option: UseDNS, value: "NO"}
+    - { option: X11Forwarding, value: "NO"}
+    - { option: AllowAgentForwarding, value: "NO"}
+
+- name: Display SSH Banner
+  ansible.builtin.copy:
+    src: banner.txt
+    dest: /etc/ssh/banner
+    mode: '0644'
+  notify: Restart sshd

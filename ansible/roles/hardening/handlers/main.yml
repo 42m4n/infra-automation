@@ -1,0 +1,32 @@
+---
+# handlers file for hardening
+- name: Restart sshd
+  become: true
+  ansible.builtin.service:
+    name: sshd
+    state: restarted
+
+- name: Restart resolvctl
+  become: true
+  ansible.builtin.service:
+    name: systemd-resolved
+    state: restarted
+
+- name: Restart NetworkManager
+  become: true
+  ansible.builtin.service:
+    name: NetworkManager
+    state: restarted
+
+- name: Restart firewalld
+  become: true
+  ansible.builtin.service:
+    name: firewalld
+    state: restarted
+
+- name: Applying Kernel parameters
+  become: true
+  ansible.builtin.command:
+    cmd: sysctl --system
+  register: sysctl_output
+  changed_when: "'Applying /etc/sysctl.d/99-sysctl-lynis.conf' in sysctl_output.stdout"

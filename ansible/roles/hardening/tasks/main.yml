@@ -1,0 +1,31 @@
+---
+# tasks file for hardening
+- name: Update apt cache (for Debian/Ubuntu)
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+  when: ansible_os_family == 'Debian'  # Conditional task for Debian/Ubuntu systems
+
+- name: Setting up ntp
+  ansible.builtin.import_tasks: ntp.yml
+  tags: ntp
+
+- name: Configuring ssh
+  ansible.builtin.import_tasks: ssh.yml
+  tags: ssh
+
+- name: Configuring sysctl
+  ansible.builtin.import_tasks: sysctl.yml
+  tags: sysctl
+
+- name: Configuring firewalld
+  ansible.builtin.import_tasks: firewall.yml
+  tags: firewall
+
+- name: Configuring DNS
+  ansible.builtin.import_tasks: dns.yml
+  tags: dns
+
+- name: lynis
+  ansible.builtin.import_tasks: lynis.yml
+  tags: lynis

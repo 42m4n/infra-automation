@@ -1,0 +1,22 @@
+---
+- name: Install Lynis
+  become: true
+  ansible.builtin.package:
+    name: lynis
+    state: present
+
+- name: Run Lynis Audit
+  become: true
+  ansible.builtin.command: lynis audit system --no-colors
+  register: lynis_audit_output
+  changed_when: "'Hardening index'in lynis_audit_output.stdout_lines"
+
+- name: Get Lynis score
+  ansible.builtin.command:
+    cmd: grep hardening_index /var/log/lynis-report.dat
+  register: hardening_index
+  changed_when: "'hardening_index'in hardening_index.stdout_lines"
+
+- name: Display Lynis score
+  ansible.builtin.debug:
+    msg: "{{ hardening_index.stdout_lines }}"

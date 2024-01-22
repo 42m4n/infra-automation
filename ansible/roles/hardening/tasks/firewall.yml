@@ -1,0 +1,26 @@
+---
+- name: Install firewalld
+  become: true
+  ansible.builtin.package:
+    name: firewalld
+    state: present
+
+- name: Start firewalld service
+  become: true
+  ansible.builtin.service:
+    name: firewalld
+    state: started
+    enabled: true
+
+- name: Enable basic firewall rules
+  become: true
+  ansible.posix.firewalld:
+    service: "{{ item.service }}"
+    port: "{{ item.port }}"
+    protocol: "{{ item.protocol }}"
+    state: "{{ item.state }}"
+    immediate: true
+    permanent: true
+  notify: Restart firewalld
+  loop:
+    - { service: ssh, port: '{{ ssh_port }}', protocol: tcp, state: enabled }
