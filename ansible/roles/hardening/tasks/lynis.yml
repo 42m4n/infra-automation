@@ -12,6 +12,7 @@
   changed_when: "'Hardening index'in lynis_audit_output.stdout_lines"
 
 - name: Get Lynis score
+  become: true
   ansible.builtin.command:
     cmd: grep hardening_index /var/log/lynis-report.dat
   register: hardening_index

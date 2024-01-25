@@ -15,12 +15,10 @@
 - name: Enable basic firewall rules
   become: true
   ansible.posix.firewalld:
-    service: "{{ item.service }}"
     port: "{{ item.port }}"
-    protocol: "{{ item.protocol }}"
     state: "{{ item.state }}"
     immediate: true
     permanent: true
   notify: Restart firewalld
   loop:
-    - { service: ssh, port: '{{ ssh_port }}', protocol: tcp, state: enabled }
+    - { port: 10888/tcp, state: enabled }

@@ -12,5 +12,6 @@
     enabled: true
 
 - name: Set time-zone to Asia/Tehran
+  become: true
   community.general.timezone:
     name: Asia/Tehran

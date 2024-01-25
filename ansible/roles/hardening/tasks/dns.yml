@@ -35,11 +35,12 @@
 - name: Update resolv.conf
   become: true
   ansible.builtin.lineinfile:
-    path: /etc/resolv.confz
-    regexp: '^nameserver \d+\.\d+\.\d+\.\d+'
-    line: "nameserver 4.2.2.4" # {{ item }}"
+    path: /etc/resolv.conf
+    line: "nameserver {{ item }}"
     state: present
-  when: not resolvectl_check.stat.exists
-# loop:
-#   - "{{ dns_server_1 | default('1.1.1.1') }}"
-#   - "{{ dns_server_2 | default(8.8.8.8) }}"
+  when: 
+    - not resolvectl_check.stat.exists 
+    - not nmcli_check.stat.exists 
+  loop:
+    - "{{ dns_server_1 | default(1.1.1.1) }}"
+    - "{{ dns_server_2 | default(8.8.8.8) }}"
