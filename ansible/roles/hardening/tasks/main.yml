@@ -1,9 +1,9 @@
 ---
-#tasks file for hardening
 - name: Update apt cache (for Debian/Ubuntu)
   become: true
   ansible.builtin.apt:
     update_cache: true
+    upgrade: true
   when: ansible_os_family == 'Debian'  # Conditional task for Debian/Ubuntu systems
 
 - name: Setting up ntp
@@ -26,6 +26,10 @@
   ansible.builtin.import_tasks: dns.yml
   tags: dns
 
-- name: lynis
+- name: Fail2ban
+  ansible.builtin.import_tasks: fail2ban.yml
+  tags: fail2ban
+
+- name: Lynis
   ansible.builtin.import_tasks: lynis.yml
   tags: lynis

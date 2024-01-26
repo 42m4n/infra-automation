@@ -1,0 +1,32 @@
+- name: Install fail2ban package
+  become: true
+  ansible.builtin.package:
+    name:
+      - fail2ban
+      - python3-systemd
+      - firewalld
+    state: present
+
+- name: Change backend
+  become: true
+  community.general.ini_file:
+    path: /etc/fail2ban/jail.local
+    section: DEFAULT
+    option: '{{ item.option }}'
+    value: '{{ item.value }}'
+    create: true
+    mode: 644
+  loop:
+    - { option: backend, value: systemd }
+    - { option: banaction, value: 'firewallcmd-rich-rules[actiontype=<multiport>]' }
+    - { option: banaction_allports, value: 'firewallcmd-rich-rules[actiontype=<allports>]' }
+  notify: Restart fail2ban
+
+- name: Fail2ban service
+  become: true
+  ansible.builtin.service:
+    name: '{{ item }}'
+    state: started
+  loop:
+    - fail2ban
+    - firewalld

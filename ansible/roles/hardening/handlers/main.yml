@@ -25,6 +25,15 @@
     name: firewalld
     state: restarted
 
+- name: Restart fail2ban
+  become: true
+  ansible.builtin.service:
+    name: '{{ item }}'
+    state: restarted
+  loop:
+    - fail2ban
+    - firewalld
+
 - name: Restart sshd
   become: true
   ansible.builtin.service:
