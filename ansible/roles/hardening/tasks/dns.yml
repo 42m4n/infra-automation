@@ -38,9 +38,9 @@
     path: /etc/resolv.conf
     line: "nameserver {{ item }}"
     state: present
-  when: 
-    - not resolvectl_check.stat.exists 
-    - not nmcli_check.stat.exists 
+  when:
+    - not resolvectl_check.stat.exists
+    - not nmcli_check.stat.exists
   loop:
     - "{{ dns_server_1 | default(1.1.1.1) }}"
     - "{{ dns_server_2 | default(8.8.8.8) }}"

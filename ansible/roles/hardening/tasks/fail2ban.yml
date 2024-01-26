@@ -1,12 +1,3 @@
-- name: Install fail2ban package
-  become: true
-  ansible.builtin.package:
-    name:
-      - fail2ban
-      - python3-systemd
-      - firewalld
-    state: present
-
 - name: Change backend
   become: true
   community.general.ini_file:

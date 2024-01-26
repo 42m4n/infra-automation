@@ -2,9 +2,27 @@
 - name: Update apt cache (for Debian/Ubuntu)
   become: true
   ansible.builtin.apt:
+    name:
+      - needrestart
+      - apt-listchanges
+      - libpam-tmpdir
+      - debsums
+      - unattended-upgrades
+      - apt-show-versions
+      - lynis
+      - fail2ban
+      - python3-systemd
+      - firewalld
+      - chrony
+    state: present
     update_cache: true
-    upgrade: true
   when: ansible_os_family == 'Debian'  # Conditional task for Debian/Ubuntu systems
+
+- name: Upgrade packages
+  become: true
+  ansible.builtin.apt:
+    upgrade: true
+    autoremove: true
 
 - name: Setting up ntp
   ansible.builtin.import_tasks: ntp.yml
@@ -29,6 +47,10 @@
 - name: Fail2ban
   ansible.builtin.import_tasks: fail2ban.yml
   tags: fail2ban
+
+- name: Lynis suggestions
+  ansible.builtin.import_tasks: lynis-suggestions.yml
+  tags: suggestions
 
 - name: Lynis
   ansible.builtin.import_tasks: lynis.yml

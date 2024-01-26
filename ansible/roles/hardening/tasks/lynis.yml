@@ -1,10 +1,4 @@
 ---
-- name: Install Lynis
-  become: true
-  ansible.builtin.package:
-    name: lynis
-    state: present
-
 - name: Run Lynis Audit
   become: true
   ansible.builtin.command: lynis audit system --no-colors

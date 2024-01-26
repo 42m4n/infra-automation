@@ -1,0 +1,42 @@
+---
+- name: Set default umask
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/login.defs
+    regexp: '^UMASK'
+    line: 'UMASK           027'
+
+- name: Set file permitions
+  become: true
+  ansible.builtin.file:
+    path: '{{ item.path }}'
+    mode: '{{ item.mode }}'
+  loop:
+    - { path: /etc/ssh/sshd_config, mode: 600 }
+    - { path: /root/.ssh, mode: 700 }
+    - { path: /etc/cron.d, mode: 700 }
+    - { path: /etc/cron.hourly, mode: 700 }
+    - { path: /etc/cron.daily, mode: 700 }
+    - { path: /etc/cron.weekly, mode: 700 }
+    - { path: /etc/cron.monthly, mode: 700 }
+    - { path: /etc/passwd-, mode: 644 }
+    - { path: /etc/passwd, mode: 644 }
+    - { path: /etc/issue.net, mode: 644 }
+    - { path: /etc/issue, mode: 644 }
+    - { path: /boot/grub/grub.cfg, mode: 600 }
+    - { path: /etc/crontab, mode: 600 }
+    - { path: /etc/group, mode: 644 }
+    - { path: /etc/group-, mode: 644 }
+    - { path: /etc/hosts.allow, mode: 644 }
+    - { path: /etc/hosts.deny, mode: 644 }
+
+- name: Set hostname in /etc/hosts
+  become: true
+  ansible.builtin.lineinfile:
+    path: '{{ item.path }}'
+    line: '{{ item.line }}'
+    state: present
+  loop:
+    - { path: /etc/profile, line: umask 027 }
+    - { path: /etc/bash.bashrc, line: umask 027 }
+    - { path: /etc/hosts, line: '127.0.0.1 {{ ansible_hostname }}' }

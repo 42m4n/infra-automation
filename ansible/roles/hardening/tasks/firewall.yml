@@ -1,10 +1,4 @@
 ---
-- name: Install firewalld
-  become: true
-  ansible.builtin.package:
-    name: firewalld
-    state: present
-
 - name: Start firewalld service
   become: true
   ansible.builtin.service:
