@@ -1,0 +1,7 @@
+---
+- hosts: scan_ports
+  become: true
+  gather_facts: yes
+  name: Nmap_Scan
+  roles:
+   - scan

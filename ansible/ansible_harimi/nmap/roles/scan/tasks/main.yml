@@ -1,0 +1,6 @@
+---
+- name: install & config nmap
+  import_tasks: installation.yml
+
+- name: run nmap
+  import_tasks: run.yml

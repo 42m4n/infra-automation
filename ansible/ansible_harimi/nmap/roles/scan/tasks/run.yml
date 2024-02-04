@@ -1,0 +1,8 @@
+- name: Run Nmap Scan
+  command: "nmap {{ inventory_hostname }}"
+  register: nmap_output
+- name: Sort Nmap Scan Results
+  command: "echo '{{ nmap_output.stdout_lines | join('\n') }}' | sort"
+  register: sorted_nmap_output
+- name: Display Nmap Scan Results
+  debug: var=nmap_output.stdout_lines
