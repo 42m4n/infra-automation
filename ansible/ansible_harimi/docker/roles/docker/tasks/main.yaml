@@ -1,0 +1,9 @@
+---
+- name: install docker
+  import_tasks: install.yaml
+  tags: install
+  
+
+
+
+
