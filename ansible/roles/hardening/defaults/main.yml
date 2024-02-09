@@ -1,5 +1,5 @@
 ---
 # defaults file for hardening
 ssh_port: 10888
-dns_server_1: 1.1.1.1
-dns_server_2: 8.8.8.8
+dns_server_1: 10.202.10.202
+dns_server_2: 10.202.10.102
