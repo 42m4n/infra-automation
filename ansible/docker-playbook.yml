@@ -1,0 +1,73 @@
+---
+- name: Installing Docker
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Update /etc/resolv.conf
+      lineinfile:
+        path: /etc/resolv.conf
+        line: 'nameserver {{ item.nameserver }}'
+        state: '{{ item.state }}'
+      loop:
+        - { nameserver: 10.202.10.102 ,state: present }
+        - { nameserver: 10.202.10.202 ,state: present }
+        - { nameserver: 1.1.1.1 ,state: absent }
+        - { nameserver: 8.8.8.8 ,state: absent }
+    - name: Uninstall all conflicting packages
+      ansible.builtin.apt:
+        name:
+          - docker.io
+          - docker-doc
+          - docker-compose
+          - docker-compose-v2
+          - podman-docker
+          - containerd
+          - runc
+        state: absent
+    - name: Install dependencies
+      ansible.builtin.package:
+        name:
+          - ca-certificates
+          - gnupg
+        state: present
+    - name: Add apt key
+      ansible.builtin.apt_key:
+        url: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
+    - name: Add docker repository
+      ansible.builtin.apt_repository:
+        repo: "deb [arch={{ 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}] \
+          https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
+        state: present
+    - name: Install docker
+      ansible.builtin.apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+        update_cache: true
+    - name: Add ansible_user to Docker group
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
+
+    - name: Add Docker daemon configuration file
+      copy:
+        content: |
+          {
+          "insecure-registries" : ["https://docker.arvancloud.ir"],
+          "registry-mirrors": ["https://docker.arvancloud.ir"]
+          }
+        dest: /etc/docker/daemon.json
+        mode: 0644
+      notify: Restart Docker daemon
+
+  handlers:
+    - name: Restart Docker daemon
+      service:
+        name: docker
+        state: restarted
